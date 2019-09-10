@@ -1,0 +1,87 @@
+;
+; ScreenDuoDriver.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=USBDevice
+ClassGuid={88BAE032-5A81-49f0-BC3D-A4FF138216D6}
+Provider=%ManufacturerName%
+CatalogFile=ScreenDuoDriver.cat
+DriverVer=
+
+[DestinationDirs]
+DefaultDestDir = 12
+ScreenDuoDriver_Device_CoInstaller_CopyFiles = 11
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+ScreenDuoDriver.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%ScreenDuoDriver.DeviceDesc%=ScreenDuoDriver_Device, USB\VID_vvvv&PID_pppp
+
+[ScreenDuoDriver_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+ScreenDuoDriver.sys
+
+[ScreenDuoDriver_Device.NT.HW]
+AddReg=ScreenDuoDriver_AddReg
+
+[ScreenDuoDriver_AddReg]
+; By default, USBDevice class uses iProduct descriptor to name the device in
+; Device Manager on Windows 8 and higher.
+; Uncomment for this device to use %DeviceName% on Windows 8 and higher:
+;HKR,,FriendlyName,,%ScreenDuoDriver.DeviceDesc%
+
+;-------------- Service installation
+[ScreenDuoDriver_Device.NT.Services]
+AddService = ScreenDuoDriver,%SPSVCINST_ASSOCSERVICE%, ScreenDuoDriver_Service_Inst
+
+; -------------- ScreenDuoDriver driver install sections
+[ScreenDuoDriver_Service_Inst]
+DisplayName    = %ScreenDuoDriver.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\ScreenDuoDriver.sys
+
+;
+;--- ScreenDuoDriver_Device Coinstaller installation ------
+;
+
+[ScreenDuoDriver_Device.NT.CoInstallers]
+AddReg=ScreenDuoDriver_Device_CoInstaller_AddReg
+CopyFiles=ScreenDuoDriver_Device_CoInstaller_CopyFiles
+
+[ScreenDuoDriver_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[ScreenDuoDriver_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[ScreenDuoDriver_Device.NT.Wdf]
+KmdfService =  ScreenDuoDriver, ScreenDuoDriver_wdfsect
+[ScreenDuoDriver_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+ClassName="Universal Serial Bus devices"
+DiskName = "ScreenDuoDriver Installation Disk"
+ScreenDuoDriver.DeviceDesc = "ScreenDuoDriver Device"
+ScreenDuoDriver.SVCDESC = "ScreenDuoDriver Service"
+REG_MULTI_SZ = 0x00010000
