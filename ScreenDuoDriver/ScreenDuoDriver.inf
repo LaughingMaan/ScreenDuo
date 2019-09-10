@@ -29,7 +29,7 @@ WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with
 %ManufacturerName%=Standard,NT$ARCH$
 
 [Standard.NT$ARCH$]
-%ScreenDuoDriver.DeviceDesc%=ScreenDuoDriver_Device, USB\VID_vvvv&PID_pppp
+%ScreenDuoDriver.DeviceDesc%=ScreenDuoDriver_Device, USB\VID_1043&PID_3100
 
 [ScreenDuoDriver_Device.NT]
 CopyFiles=Drivers_Dir
@@ -79,7 +79,7 @@ KmdfLibraryVersion = $KMDFVERSION$
 
 [Strings]
 SPSVCINST_ASSOCSERVICE= 0x00000002
-ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+ManufacturerName="AsusTek Inc."
 ClassName="Universal Serial Bus devices"
 DiskName = "ScreenDuoDriver Installation Disk"
 ScreenDuoDriver.DeviceDesc = "ScreenDuoDriver Device"
