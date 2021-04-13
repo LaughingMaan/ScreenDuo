@@ -77,7 +77,7 @@ Return Value:
         TraceEvents(TRACE_LEVEL_ERROR, TRACE_QUEUE, "WdfIoQueueCreate failed %!STATUS!", status);
         return status;
     }
-
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "KdPrintEx %s", "Queque Initialize"));
     return status;
 }
 
@@ -120,7 +120,7 @@ Return Value:
                 Queue, Request, (int) OutputBufferLength, (int) InputBufferLength, IoControlCode);
 
     WdfRequestComplete(Request, STATUS_SUCCESS);
-
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "KdPrintEx %s", "Device Control"));
     return;
 }
 
@@ -181,6 +181,6 @@ Return Value:
     // guaranteed to complete in a small amount of time. For example, the driver might
     // take no action for requests that are completed in one of the driver’s request handlers.
     //
-
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "KdPrintEx %s", "Driver EvtIOStop"));
     return;
 }

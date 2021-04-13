@@ -1,0 +1,7 @@
+// Файлы указаний помогают среде IDE Visual Studio интерпретировать идентификаторы Visual C++
+// (например, имена функций и макросов).
+// Дополнительные сведения: https://go.microsoft.com/fwlink/?linkid=865984
+#define EXTERN_C_START extern "C" {
+#define EXTERN_C_START
+#define _STD_BEGIN namespace std {
+#define _STD_END }

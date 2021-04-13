@@ -1,0 +1,2 @@
+cd /d "C:\Users\Andrey\source\repos\ScreenDuo\ScreenDuoUMDF" &msbuild "ScreenDuoUMDF.vcxproj" /t:sdvViewer /p:configuration="Debug" /p:platform="x64" /p:SolutionDir="C:\Users\Andrey\source\repos\ScreenDuo" 
+exit %errorlevel% 

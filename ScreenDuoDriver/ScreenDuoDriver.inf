@@ -8,7 +8,7 @@ Class=USBDevice
 ClassGuid={88BAE032-5A81-49f0-BC3D-A4FF138216D6}
 Provider=%ManufacturerName%
 CatalogFile=ScreenDuoDriver.cat 
-DriverVer=
+DriverVer=22/02/2021, 0.0.0.1 
 
 [DestinationDirs]
 DefaultDestDir = 12
@@ -44,7 +44,7 @@ AddReg=ScreenDuoDriver_AddReg
 ; By default, USBDevice class uses iProduct descriptor to name the device in
 ; Device Manager on Windows 8 and higher.
 ; Uncomment for this device to use %DeviceName% on Windows 8 and higher:
-;HKR,,FriendlyName,,%ScreenDuoDriver.DeviceDesc%
+HKR,,FriendlyName,,%ScreenDuoDriver.DeviceDesc%
 
 ;-------------- Service installation
 [ScreenDuoDriver_Device.NT.Services]
@@ -74,8 +74,11 @@ WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
 
 [ScreenDuoDriver_Device.NT.Wdf]
 KmdfService =  ScreenDuoDriver, ScreenDuoDriver_wdfsect
+UmdfDispatcher	=	NativeUSB
+UmdfKernelModeClientPolicy = AllowKernelModeClients
 [ScreenDuoDriver_wdfsect]
 KmdfLibraryVersion = $KMDFVERSION$
+
 
 [Strings]
 SPSVCINST_ASSOCSERVICE= 0x00000002

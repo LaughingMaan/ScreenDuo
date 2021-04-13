@@ -10,19 +10,12 @@ Abstract:
 
 Environment:
 
-    Kernel-mode Driver Framework
+    User-mode Driver Framework 2
 
 --*/
 
 #include "driver.h"
 #include "driver.tmh"
-
-#ifdef ALLOC_PRAGMA
-#pragma alloc_text (INIT, DriverEntry)
-#pragma alloc_text (PAGE, ScreenDuoDriverEvtDeviceAdd)
-#pragma alloc_text (PAGE, ScreenDuoDriverEvtDriverContextCleanup)
-#endif
-
 
 NTSTATUS
 DriverEntry(
@@ -55,6 +48,7 @@ Return Value:
 
 --*/
 {
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "KdPrintEx %s", "DriverEntry"));
     WDF_DRIVER_CONFIG config;
     NTSTATUS status;
     WDF_OBJECT_ATTRIBUTES attributes;
@@ -62,7 +56,11 @@ Return Value:
     //
     // Initialize WPP Tracing
     //
+#if UMDF_VERSION_MAJOR == 2 && UMDF_VERSION_MINOR == 0
+    WPP_INIT_TRACING(MYDRIVER_TRACING_ID);
+#else
     WPP_INIT_TRACING( DriverObject, RegistryPath );
+#endif
 
     TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Entry");
 
@@ -71,10 +69,10 @@ Return Value:
     // the framework driver object is deleted during driver unload.
     //
     WDF_OBJECT_ATTRIBUTES_INIT(&attributes);
-    attributes.EvtCleanupCallback = ScreenDuoDriverEvtDriverContextCleanup;
+    attributes.EvtCleanupCallback = ScreenDuoUMDFEvtDriverContextCleanup;
 
     WDF_DRIVER_CONFIG_INIT(&config,
-                           ScreenDuoDriverEvtDeviceAdd
+                           ScreenDuoUMDFEvtDeviceAdd
                            );
 
     status = WdfDriverCreate(DriverObject,
@@ -86,19 +84,21 @@ Return Value:
 
     if (!NT_SUCCESS(status)) {
         TraceEvents(TRACE_LEVEL_ERROR, TRACE_DRIVER, "WdfDriverCreate failed %!STATUS!", status);
+#if UMDF_VERSION_MAJOR == 2 && UMDF_VERSION_MINOR == 0
+        WPP_CLEANUP();
+#else
         WPP_CLEANUP(DriverObject);
+#endif
         return status;
     }
 
     TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Exit");
-	//KdPrint(("Driver Entry"));
-	//DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "hello %s", "world");
-	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL,"KdPrintEx %s" ,"Driver Entry"));
+
     return status;
 }
 
 NTSTATUS
-ScreenDuoDriverEvtDeviceAdd(
+ScreenDuoUMDFEvtDeviceAdd(
     _In_    WDFDRIVER       Driver,
     _Inout_ PWDFDEVICE_INIT DeviceInit
     )
@@ -121,23 +121,22 @@ Return Value:
 
 --*/
 {
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "KdPrintEx %s", "ScreenDuoUMDFEvtDeviceAdd"));
     NTSTATUS status;
 
     UNREFERENCED_PARAMETER(Driver);
 
-    PAGED_CODE();
-
     TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Entry");
 
-    status = ScreenDuoDriverCreateDevice(DeviceInit);
+    status = ScreenDuoUMDFCreateDevice(DeviceInit);
 
     TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Exit");
-	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "KdPrintEx %s", "DeviceAdd"));
+
     return status;
 }
 
 VOID
-ScreenDuoDriverEvtDriverContextCleanup(
+ScreenDuoUMDFEvtDriverContextCleanup(
     _In_ WDFOBJECT DriverObject
     )
 /*++
@@ -155,16 +154,17 @@ Return Value:
 
 --*/
 {
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "KdPrintEx %s", "ScreenDuoUMDFEvtDriverContextCleanup"));
     UNREFERENCED_PARAMETER(DriverObject);
-
-    PAGED_CODE ();
 
     TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Entry");
 
     //
     // Stop WPP Tracing
     //
-    WPP_CLEANUP( WdfDriverWdmGetDriverObject( (WDFDRIVER) DriverObject) );
-	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "KdPrintEx %s", "Context Clenup"));
+#if UMDF_VERSION_MAJOR == 2 && UMDF_VERSION_MINOR == 0
+    WPP_CLEANUP();
+#else
+    WPP_CLEANUP(WdfDriverWdmGetDriverObject((WDFDRIVER)DriverObject));
+#endif
 }
-//KdPrint

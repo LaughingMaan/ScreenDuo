@@ -95,7 +95,7 @@ Return Value:
             status = ScreenDuoDriverQueueInitialize(device);
         }
     }
-
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "KdPrintEx %s", "CreateDevice"));
     return status;
 }
 
@@ -194,6 +194,6 @@ Return Value:
     }
 
     TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Exit");
-
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "KdPrintEx %s", "Prepare Hardware"));
     return status;
 }
